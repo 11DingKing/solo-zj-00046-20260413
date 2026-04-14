@@ -73,8 +73,8 @@ class EmployeeServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should save employee when save is called with valid employee")
-    void should_save_employee_when_save_is_called_with_valid_employee() {
+    @DisplayName("Should create employee when save is called with new employee")
+    void should_create_employee_when_save_is_called_with_new_employee() {
         Employee employee = createEmployee(null, "John", "Doe", "New York", "123 Main St", "1234567890");
         Employee savedEmployee = createEmployee(1L, "John", "Doe", "New York", "123 Main St", "1234567890");
 
@@ -86,6 +86,22 @@ class EmployeeServiceImplTest {
         assertEquals("John", result.getFirstName());
         assertEquals("Doe", result.getLastName());
         verify(employeeRepository, times(1)).save(employee);
+    }
+
+    @Test
+    @DisplayName("Should update employee when save is called with existing employee")
+    void should_update_employee_when_save_is_called_with_existing_employee() {
+        Employee existingEmployee = createEmployee(1L, "John", "Doe", "New York", "123 Main St", "1234567890");
+        Employee updatedEmployee = createEmployee(1L, "John", "Smith", "Los Angeles", "456 Oak Ave", "0987654321");
+
+        when(employeeRepository.save(existingEmployee)).thenReturn(updatedEmployee);
+
+        Employee result = employeeService.save(existingEmployee);
+
+        assertEquals(1L, result.getId());
+        assertEquals("Smith", result.getLastName());
+        assertEquals("Los Angeles", result.getCity());
+        verify(employeeRepository, times(1)).save(existingEmployee);
     }
 
     @Test
